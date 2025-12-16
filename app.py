@@ -11,7 +11,6 @@ MODEL_PATH = "face_recognition_mobilenet_3class.h5"
 IMG_SIZE = 224
 
 CLASS_NAMES = ["Gobinath", "Guru Nagajothi", "Saravana kumar"]
-# MUST MATCH train_data.class_indices ORDER
 
 # ---------------- LOAD MODEL ----------------
 @st.cache_resource
@@ -24,16 +23,27 @@ model = load_cnn_model()
 
 # ---------------- UI ----------------
 st.title("🧠 Face Recognition App")
-st.write("Upload a face image")
 
-uploaded_file = st.file_uploader("Choose an image", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader(
+    "Upload a face image",
+    type=["jpg", "jpeg", "png"]
+)
 
-if uploaded_file:
+if uploaded_file is not None:
     st.image(uploaded_file, use_container_width=True)
 
-    img = image.load_img(uploaded_file, target_size=(IMG_SIZE, IMG_SIZE))
-    img_array = image.img_to_array(img) / 255.0
+    # ✅ FORCE RGB
+    img = image.load_img(
+        uploaded_file,
+        target_size=(IMG_SIZE, IMG_SIZE),
+        color_mode="rgb"
+    )
+
+    img_array = image.img_to_array(img)
+    img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
+
+    st.write("Image shape before prediction:", img_array.shape)
 
     prediction = model.predict(img_array)
     class_index = np.argmax(prediction)
@@ -41,5 +51,4 @@ if uploaded_file:
 
     st.success(f"### Predicted Person: {CLASS_NAMES[class_index]}")
     st.info(f"Confidence: {confidence:.2f}%")
-
     st.write("Raw prediction:", prediction)
