@@ -7,8 +7,7 @@ import os
 
 # ---------------- CONFIG ----------------
 MODEL_URL = "https://drive.google.com/uc?id=1BQAWXyu7FcMq7rbKG6D5CJBuUCis7ukk"
-MODEL_PATH = "face_recognition_mobilenet_3class.h5"
-IMG_SIZE = 224
+MODEL_PATH = "face_recognition_model.h5"
 
 CLASS_NAMES = ["Gobinath", "Guru Nagajothi", "Saravana kumar"]
 
@@ -21,6 +20,10 @@ def load_cnn_model():
 
 model = load_cnn_model()
 
+# 🔥 AUTO-DETECT INPUT SHAPE
+_, IMG_H, IMG_W, IMG_C = model.input_shape
+st.write("Detected model input shape:", model.input_shape)
+
 # ---------------- UI ----------------
 st.title("🧠 Face Recognition App")
 
@@ -32,18 +35,25 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
     st.image(uploaded_file, use_container_width=True)
 
-    # ✅ FORCE RGB
+    # Handle grayscale vs RGB automatically
+    color_mode = "rgb" if IMG_C == 3 else "grayscale"
+
     img = image.load_img(
         uploaded_file,
-        target_size=(IMG_SIZE, IMG_SIZE),
-        color_mode="rgb"
+        target_size=(IMG_H, IMG_W),
+        color_mode=color_mode
     )
 
     img_array = image.img_to_array(img)
+
+    # If grayscale, expand channel dimension
+    if IMG_C == 1:
+        img_array = np.expand_dims(img_array, axis=-1)
+
     img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    st.write("Image shape before prediction:", img_array.shape)
+    st.write("Image shape sent to model:", img_array.shape)
 
     prediction = model.predict(img_array)
     class_index = np.argmax(prediction)
