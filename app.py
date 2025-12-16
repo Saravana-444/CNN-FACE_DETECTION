@@ -6,10 +6,10 @@ import gdown
 import os
 
 # ---------------- CONFIG ----------------
-MODEL_URL = "https://drive.google.com/uc?id=1BQAWXyu7FcMq7rbKG6D5CJBuUCis7ukk"
+MODEL_URL = "https://drive.google.com/uc?id=1rGhi1n9Hy3Wu-vJDVShDD77-ANFES03r"
 MODEL_PATH = "face_recognition_model.h5"
 
-CLASS_NAMES = ["Gobinath", "Guru Nagajothi", "Saravana kumar"]
+CLASS_NAMES = ["Saravana Kumar", "Guru Nagajothi", "Gobinath"]
 
 # ---------------- LOAD MODEL ----------------
 @st.cache_resource
