@@ -5,14 +5,11 @@ from tensorflow.keras.preprocessing import image
 import gdown
 import os
 
-# ---------------- CONFIG ----------------
 MODEL_URL = "https://drive.google.com/uc?id=1rGhi1n9Hy3Wu-vJDVShDD77-ANFES03r"
 MODEL_PATH = "face_recognition_model.h5"
 
 CLASS_NAMES = ["Saravana Kumar", "Guru Nagajothi", "Gobinath"]
 
-# ---------------- LOAD MODEL ----------------
-@st.cache_resource
 def load_cnn_model():
     if not os.path.exists(MODEL_PATH):
         gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
@@ -20,11 +17,10 @@ def load_cnn_model():
 
 model = load_cnn_model()
 
-# 🔥 AUTO-DETECT INPUT SHAPE
 _, IMG_H, IMG_W, IMG_C = model.input_shape
 st.write("Detected model input shape:", model.input_shape)
 
-# ---------------- UI ----------------
+
 st.title("🧠 Face Recognition App")
 
 uploaded_file = st.file_uploader(
@@ -46,7 +42,6 @@ if uploaded_file is not None:
 
     img_array = image.img_to_array(img)
 
-    # If grayscale, expand channel dimension
     if IMG_C == 1:
         img_array = np.expand_dims(img_array, axis=-1)
 
